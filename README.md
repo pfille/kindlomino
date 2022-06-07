@@ -1,6 +1,6 @@
-[![Action Shot](/images/display.jpg)](https://youtu.be/7x2k6CjCG04)
+![Action Shot](/images/display.jpg)
 
-# Kindlomino: A high definition ePaper 'Now Playing' viewer For Volumio on a jailbroken Kindle
+# Kindlomino: A high definition ePaper 'Now Playing' viewer for Volumio on a jailbroken Kindle
 [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
 
 Code for an easy-on-the-eye ePaper display that talks to a kind-to-the-ear, bit-perfect music player. All of the musical heavy lifting is done by [Volumio](https://github.com/volumio/Volumio2). The code sets up a socket connection, listens for changes and updates the information displayed on a jailbroken kindle.
@@ -24,9 +24,12 @@ This is covered in detail elsewhere, but the **tl;dr** is
 - A Pi Zero running Raspbian
 - Kindle that can be jailbroken
 
-## Installation 
+## Preparation of the Kindle
+TBD
 
-All of this takes place on the dedicated Pi Zero2 or the Pi Zero2 running the volumio server. 
+## Installation on the Pi
+
+All of this takes place on dedicated Pi Zero2 or the Pi Zero2 running the volumio server. 
 
 From your home directory, clone the repository 
 
@@ -43,7 +46,7 @@ cp config_example.yaml config.yaml
 You can then edit `config.yaml` file to set the name of your server.
 Once that's done, you can run the code using the command:
 ```
-python3 palomino.py
+python3 kindlomino.py
 ```
 After a few seconds, the screen will show the track currently playing on you Volumio server.
 
@@ -52,14 +55,14 @@ After a few seconds, the screen will show the track currently playing on you Vol
 Once you've got a working instance of the code, you will probably want it to start automatically every time you power up. You can use systemd to start the code as a service on boot.
 
 ```
-cat <<EOF | sudo tee /etc/systemd/system/palomino.service
+cat <<EOF | sudo tee /etc/systemd/system/kindlomino.service
 [Unit]
-Description=palomino
+Description=kindlomino
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 -u /home/pi/palomino/palomino.py
-WorkingDirectory=/home/pi/palomino/
+ExecStart=/usr/bin/python3 -u /home/pi/kindlomino/kindlomino.py
+WorkingDirectory=/home/pi/kindlomino/
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
@@ -71,8 +74,8 @@ EOF
 ```
 Now, simply enable the service you just made and reboot...
 ```  
-sudo systemctl enable palomino.service
-sudo systemctl start palomino.service
+sudo systemctl enable kindlomino.service
+sudo systemctl start kindlomino.service
 
 sudo reboot
 ```
