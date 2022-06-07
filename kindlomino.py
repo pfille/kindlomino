@@ -147,7 +147,7 @@ def on_push_state(*args):
                     stdin=subprocess.PIPE,
                     universal_newlines=True,
                 )
-                pause_image.stdin.write("/usr/sbin/eips -f -g /tmp/root/fat_pony.png\n")
+                pause_image.stdin.write("/usr/sbin/eips -f -g /tmp/root/stopped.png\n")
                 pause_image.stdin.write("exit\n")
                 pause_image.stdin.close()
 
