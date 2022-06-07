@@ -1,37 +1,36 @@
-[![Action Shot](/images/Dolphin.jpg)](https://youtu.be/7x2k6CjCG04)
+[![Action Shot](/images/display.jpg)](https://youtu.be/7x2k6CjCG04)
 
-[![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCz5BOU9J9pB_O0B8-rDjCWQ?label=YouTube&style=social)](https://www.youtube.com/channel/UCz5BOU9J9pB_O0B8-rDjCWQ)
+# Kindlomino: A high definition ePaper 'Now Playing' viewer For Volumio on a jailbroken Kindle
+Code for an easy-on-the-eye ePaper display that talks to a kind-to-the-ear, bit-perfect music player. All of the musical heavy lifting is done by [Volumio](https://github.com/volumio/Volumio2). The code sets up a socket connection, listens for changes and updates the information displayed on a jailbroken kindle.
 
-# Palomino: A high definition ePaper 'Now Playing' viewer For Volumio
-Code for an easy-on-the-eye ePaper display that talks to a kind-to-the-ear, bit-perfect music player. All of the musical heavy lifting is done by [Volumio](https://github.com/volumio/Volumio2). The code sets up a socket connection, listens for changes and updates the display when needed. The code currently reflects what is going on on the server, but adding server control via the [api](https://volumio.github.io/docs/API/REST_API.html) is very straightforward.
+## References
+This project is based on the original [palomino project](https://github.com/veebch/palomino) and [this blog post](https://matthealy.com/kindle?utm_source=pocket_mylist). The idea is to generate an png image with the now playing information that can then be displayed on the Kindle.
 
 ## Hardware
 **Volumio server**:
 This is covered in detail elsewhere, but the **tl;dr** is
 
-- Pi 4 and speakers with built in DAC (eg KEF LS50) **or**
-- Pi 4 and DAC (Hifiberry, IQAudio etc) and Sound System
+- Pi Zero2 and [JustBoom Digi Zero pHAT ](https://shop.justboom.co/collections/raspberry-pi-audio-boards/products/justboom-digi-zero-phat)
 
 **Track Viewer**:
-- Pi Zero WH
-- E Paper Display (a Waveshare 6" HD screen)
+- Pi Zero2 (or essentially any newer Pi; the script can also be run on the Pi that is running the Volumio server itself)
+- [Kindle Touch (Kindle 5, 600x800 px)](https://wiki.mobileread.com/wiki/Kindle_Touch) or any other Kindle that can be jailbroken to enable USB networking.
 
-The viewer in the [YouTube video](https://youtu.be/7x2k6CjCG04) is running on one [of these](https://www.veeb.ch/store/p/tickerxl), which is a Raspberry Pi Zero WH and a High Definition E-Paper Display in a custom frame.
 
 ## Prerequisites
 - A Working Volumio server on your LAN
-- A Pi Zero running Raspbian, with a Waveshare 6inch HD ePaper attached
-- The Python module for [IT8951](https://github.com/GregDMeyer/IT8951) installed on the Pi Zero
+- A Pi Zero running Raspbian
+- Kindle that can be jailbroken
 
 ## Installation 
 
-All of this takes place on the Pi-Zero - **not on the volumio server** . 
+All of this takes place on the dedicated Pi Zero2 or the Pi Zero2 running the volumio server. 
 
 From your home directory, clone the repository 
 
 ```
-git clone git@github.com:llvllch/palomino.git
-cd palomino
+git clone git@github.com:pfille/kindlomino.git
+cd kindlomino
 ```
 
 then install the required modules using `python3 -m pip install -r requirements.txt` then 
