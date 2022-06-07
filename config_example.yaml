@@ -1,8 +1,9 @@
 display:
-  vcom: -2.61 
-  inverted: false
-  coversize: 450
-  indent: 180
-  font: MavenPro-Regular
+  width: 800
+  height: 600 
+  fontsize: 90
+  linespacing: 4
+  max_chars: 30
+  max_chars_per_line: 15
 server:
   name: volumio.local

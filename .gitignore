@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 
 config.yaml
+
+# PDM
+.pdm.toml

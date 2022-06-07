@@ -1,6 +1,8 @@
 [![Action Shot](/images/display.jpg)](https://youtu.be/7x2k6CjCG04)
 
 # Kindlomino: A high definition ePaper 'Now Playing' viewer For Volumio on a jailbroken Kindle
+[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
+
 Code for an easy-on-the-eye ePaper display that talks to a kind-to-the-ear, bit-perfect music player. All of the musical heavy lifting is done by [Volumio](https://github.com/volumio/Volumio2). The code sets up a socket connection, listens for changes and updates the information displayed on a jailbroken kindle.
 
 ## References
