@@ -1,7 +1,11 @@
 ![Action Shot](/images/display.jpg)
 
 # Kindlomino: A high definition ePaper 'Now Playing' viewer for Volumio on a jailbroken Kindle
-[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
+
+<p align="center">
+<a href="https://pdm.fming.dev"><img alt="pdm: managed" src="https://img.shields.io/badge/pdm-managed-blueviolet"></a>
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+</p>
 
 Code for an easy-on-the-eye ePaper display that talks to a kind-to-the-ear, bit-perfect music player. All of the musical heavy lifting is done by [Volumio](https://volumio.com/en/get-started/). The code sets up a socket connection, listens for changes and updates the information displayed on a jailbroken kindle.
 
@@ -25,7 +29,7 @@ This is covered in detail elsewhere, but the **tl;dr** is
 - Kindle that can be jailbroken
 
 ## Logic of the script
-The `kindlomino.py` script is using the [socketIO](https://python-socketio.readthedocs.io/en/latest/index.html) library to listen to changes in the track information provided by the Volumio server. The information is then converted into a PNG with the respective resolution of the kindle display. This image is then send to the kindle with scp using the the USB network connection. After that the kindle native tool `eips` is used to display the image, which is triggered using ssh. Admittedly a bit hacky, but it gets he job done :)
+The `kindlomino.py` script is using the [socketIO](https://python-socketio.readthedocs.io/en/latest/index.html) library to listen to changes in the track information provided by the Volumio server. The information is then converted into a PNG with the respective resolution of the kindle display. This image is then send to the kindle with scp using the the USB network connection. After that the kindle native tool `eips` is used to display the image, which is triggered using ssh. Admittedly a bit hacky, but it gets the job done :)
 
 ## Preparation of the Kindle
 This is a short overview which is specific to the Kindle Touch with firmware version between 5.0.x and 5.4.4.2 to install the jailbreak and enable USB networking. However, it is also possible to do with many other models and frmware versions. For more information it is recommended to dig into the mobileread wiki and forum. The most important point of entry are [here](https://wiki.mobileread.com/wiki/Prefix_Index), [here](https://wiki.mobileread.com/wiki/K5_Index), and [here](https://wiki.mobileread.com/wiki/Kindle_Touch_Hacking?utm_source=pocket_mylist). All the important downloads are compiled in [NiLuJe's snapshot thread](https://www.mobileread.com/forums/showthread.php?t=225030).
