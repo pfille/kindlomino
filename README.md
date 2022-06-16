@@ -32,6 +32,8 @@ This is covered in detail elsewhere, but the **tl;dr** is
 The `kindlomino.py` script is using the [socketIO](https://python-socketio.readthedocs.io/en/latest/index.html) library to listen to changes in the track information provided by the Volumio server. The information is then converted into a PNG with the respective resolution of the kindle display. This image is then send to the kindle with scp using the the USB network connection. After that the kindle native tool `eips` is used to display the image, which is triggered using ssh. Admittedly a bit hacky, but it gets the job done :)
 
 ## Preparation of the Kindle
+**DISCLAIMER:** When attempting a jailbreak you risk bricking your device. Do at your own risk.
+
 This is a short overview which is specific to the Kindle Touch with firmware version between 5.0.x and 5.4.4.2 to install the jailbreak and enable USB networking. However, it is also possible to do with many other models and frmware versions. For more information it is recommended to dig into the mobileread wiki and forum. The most important point of entry are [here](https://wiki.mobileread.com/wiki/Prefix_Index), [here](https://wiki.mobileread.com/wiki/K5_Index), and [here](https://wiki.mobileread.com/wiki/Kindle_Touch_Hacking?utm_source=pocket_mylist). All the important downloads are compiled in [NiLuJe's snapshot thread](https://www.mobileread.com/forums/showthread.php?t=225030).
 
 ### Steps:
@@ -60,9 +62,31 @@ This is a short overview which is specific to the Kindle Touch with firmware ver
     1. Download `USBNetwork Hack` from [here](https://www.mobileread.com/forums/showthread.php?t=225030) and extract the conent into the `mrpackages` directory created in step 4.3
     1. Eject and unplug Kindle
     1. Open KUAL from the library and click the `Install MR Packages` in the KUAL Helper menu
-1. Finally to enable USB networking on the hme screen of your kindle enter `;un` in the search bar and press enter
+1. Finally to enable USB networking, on the home screen of your kindle enter `;un` in the search bar and press enter
 
 **Note:** it might be a good idea to turn off WiFi on the Kindle to prevent OTA updates to revert the jailbreak.
+
+## Connecting to the Kindle from the Pi
+**Note:** Default configuration of the Pi and the Kindle are assumed here and the IPs 192.168.15.201 (Pi as host) and 192.168.15.244 (Kindle) are used.
+
+* Connect the Kindle to te Pi via USB
+
+* Being logged into the Raspberry Pi you want to use to control the Kindle open the terminal and type: `ifconfig usb0 del 192.168.15.201`
+
+* The output of `ifconfig` should look similar to this:
+```
+usb0:0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.15.201  netmask 255.255.0.0  broadcast 169.254.255.255
+        ether XX:XX:XX:XX:XX:XX  txqueuelen 1000  (Ethernet)
+```
+
+*  Then try to connect to the Kindle: `ssh root@192.168.15.244`. You can then connect by entering any password and even an empty one. **Note** that to be able with any password you might need to turn off WiFi on the Kindle
+
+* If that worked we need to write this configuration on every boot of the Raspberry Pi. To do that add the following line into `/etc/rc.local`:
+```
+(sleep 60; ifconfig usb0 del 192.168.15.201)&
+``` 
+
 
 ## Installation on the Pi
 
@@ -85,7 +109,7 @@ Once that's done, you can run the code using the command:
 ```
 python3 kindlomino.py
 ```
-After a few seconds, the screen will show the track currently playing on you Volumio server.
+After a few seconds, the screen will show the track currently playing on your Volumio server.
 
 ## Add Autostart
 
