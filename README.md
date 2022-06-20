@@ -61,7 +61,7 @@ This is a short overview which is specific to the Kindle Touch with firmware ver
     1. Download `MR Package Installer` from [here](https://www.mobileread.com/forums/showthread.php?t=225030)
     1. Extract and copy the `extensions` and the `mrpackages` directories into the Kindle root
 1. Install USBNewtork using MRPI (detailed info [here](https://www.mobileread.com/forums/showthread.php?t=251143))
-    1. Download `USBNetwork Hack` from [here](https://www.mobileread.com/forums/showthread.php?t=225030) and extract the conent into the `mrpackages` directory created in step 4.3
+    1. Download `USBNetwork Hack` from [here](https://www.mobileread.com/forums/showthread.php?t=225030) and extract the content. Then copy the `Update_usbnet_0.22.N_install_touch_pw.bin` file into the `mrpackages` directory created in step 4.3
     1. Eject and unplug Kindle
     1. Open KUAL from the library and click the `Install MR Packages` in the KUAL Helper menu
 1. Finally to enable USB networking, on the home screen of your kindle enter `;un` in the search bar and press enter
