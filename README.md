@@ -92,7 +92,13 @@ usb0:0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
 
 ## Installation on the Pi
 
-All of this takes place on dedicated Pi Zero2 or the Pi Zero2 running the volumio server. 
+All of this takes place on dedicated Pi Zero2 or the Pi Zero2 running the volumio server.
+
+First install some dependencies:
+```
+sudo apt update && sudo apt upgrade
+sudo apt install sshpass
+```
 
 From your home directory, clone the repository 
 
