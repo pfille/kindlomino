@@ -174,6 +174,18 @@ language_dict_codes = {
     "es": "es_ES",
 }
 
+# Make sure stopped.png is available on the kindle
+send_stopped_image_command = (
+    "sshpass -p mario scp "
+    + path.join(filepath, "images", "stopped.png")
+    + " root@192.168.15.244:/tmp/root/stopped.png"
+)
+logger.debug(send_stopped_image_command.split())
+send_stopped_image = subprocess.Popen(
+    send_stopped_image_command.split(),
+)
+send_stopped_image.communicate()
+
 hyphenators = {}
 for lang in language_dict_codes.keys():
     logger.debug(lang, language_dict_codes[lang])
