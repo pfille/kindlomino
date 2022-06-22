@@ -2,8 +2,8 @@ import pathlib
 import subprocess
 import time
 import traceback
-from datetime import datetime, timedelta
 from os import path
+import threading
 
 import py3langid as langid
 import yaml
@@ -54,116 +54,111 @@ def on_connect():
     return "connected"
 
 
-def on_push_state(*args):
+def display_data(data, wasplaying, isplaying):
     global filepath
     global lastpass
     global font
     global separator
     global w_disp, h_disp
-    time_diff_calls = datetime.now() - lastpass["lastcall"]
-    logger.debug(f"time_diff_calls: {time_diff_calls}")
-    logger.debug(f"current status: {args[0]['status']}")
-    logger.debug(f"last status: {lastpass['status']}")
-    if "status" in args[0].keys() and time_diff_calls > timedelta(milliseconds=1500):
+    if (
+        data["title"] != lastpass["title"] or (wasplaying != isplaying)
+    ) and data["status"] != "stop":
+        lastpass = data
+        artist = smart_wrap(data["artist"])
+        title = smart_wrap(data["title"])
+        # logger.debug(artist)
+        # logger.debug(title)
+        now_playing = Image.new("L", (w_disp, h_disp), "white")
+        draw = ImageDraw.Draw(now_playing)
+        w_artist, h_artist = draw.textsize(artist, font=font, stroke_width=0)
+        w_title, h_title = draw.textsize(title, font=font, stroke_width=0)
+        w_sep, h_sep = draw.textsize(separator, font=font, stroke_width=0)
+        # logger.debug(h_artist)
+        # logger.debug(h_title)
+        draw.text(
+            ((w_disp - w_sep) / 2, (h_disp - h_sep) / 2 + 23),
+            separator,
+            fill=(0),
+            font=font,
+        )
+        draw.text(
+            ((w_disp - w_artist) / 2, (h_disp / 4 - h_artist / 2)),
+            artist,
+            fill=(0),
+            spacing=line_spacing,
+            align="center",
+            font=font,
+        )
+        draw.text(
+            ((w_disp - w_title) / 2, (3 * h_disp / 4 - h_title / 2)),
+            title,
+            fill=(0),
+            spacing=line_spacing,
+            align="center",
+            font=font,
+        )
+        now_playing = now_playing.rotate(90, expand=True)
+        now_playing_file = path.join(filepath, "images/now_playing.png")
+        now_playing.save(now_playing_file)
+        try:
+            send_image_command = (
+                "sshpass -p mario scp "
+                + now_playing_file
+                + " root@192.168.15.244:/tmp/root/now_playing.png"
+            )
+            # logger.debug(send_image_command.split())
+            send_image = subprocess.Popen(
+                send_image_command.split(),
+            )
+            send_image.communicate()
+            show_image_command = "sshpass -p mario ssh root@192.168.15.244"
+            show_image = subprocess.Popen(
+                show_image_command.split(),
+                stdin=subprocess.PIPE,
+                universal_newlines=True,
+            )
+            if data["status"] == "pause":
+                show_image.stdin.write(
+                    "/usr/sbin/eips -v -g /tmp/root/now_playing.png\n"
+                )
+            else:
+                show_image.stdin.write(
+                    "/usr/sbin/eips -g /tmp/root/now_playing.png\n"
+                )
+            show_image.stdin.write("exit\n")
+            show_image.stdin.close()
+        except Exception:
+            traceback.print_exc()
+    if data["status"] == "stop":
+        logger.debug(f"display image for stop")
+        try:
+            pause_image_command = "sshpass -p mario ssh root@192.168.15.244"
+            pause_image = subprocess.Popen(
+                pause_image_command.split(),
+                stdin=subprocess.PIPE,
+                universal_newlines=True,
+            )
+            pause_image.stdin.write("/usr/sbin/eips -g /tmp/root/stopped.png\n")
+            pause_image.stdin.write("exit\n")
+            pause_image.stdin.close()
+        except Exception:
+                traceback.print_exc()
+
+
+def on_push_state(*args):
+    global lastpass
+    if "status" in args[0].keys():
         # logger.info(args[0])
         logger.debug(f"display image for play/pause")
         wasplaying = bool(lastpass["status"] == "play")
         isplaying = bool(args[0]["status"] == "play")
-        if (
-            args[0]["title"] != lastpass["title"] or (wasplaying != isplaying)
-        ) and args[0]["status"] != "stop":
-            lastpass = args[0]
-            lastpass["lastcall"] = datetime.now()
-
-            artist = smart_wrap(args[0]["artist"])
-            title = smart_wrap(args[0]["title"])
-            # logger.debug(artist)
-            # logger.debug(title)
-
-            now_playing = Image.new("L", (w_disp, h_disp), "white")
-            draw = ImageDraw.Draw(now_playing)
-
-            w_artist, h_artist = draw.textsize(artist, font=font, stroke_width=0)
-            w_title, h_title = draw.textsize(title, font=font, stroke_width=0)
-            w_sep, h_sep = draw.textsize(separator, font=font, stroke_width=0)
-            # logger.debug(h_artist)
-            # logger.debug(h_title)
-
-            draw.text(
-                ((w_disp - w_sep) / 2, (h_disp - h_sep) / 2 + 23),
-                separator,
-                fill=(0),
-                font=font,
-            )
-            draw.text(
-                ((w_disp - w_artist) / 2, (h_disp / 4 - h_artist / 2)),
-                artist,
-                fill=(0),
-                spacing=line_spacing,
-                align="center",
-                font=font,
-            )
-            draw.text(
-                ((w_disp - w_title) / 2, (3 * h_disp / 4 - h_title / 2)),
-                title,
-                fill=(0),
-                spacing=line_spacing,
-                align="center",
-                font=font,
-            )
-
-            now_playing = now_playing.rotate(90, expand=True)
-            now_playing_file = path.join(filepath, "images/now_playing.png")
-            now_playing.save(now_playing_file)
-
-            try:
-                send_image_command = (
-                    "sshpass -p mario scp "
-                    + now_playing_file
-                    + " root@192.168.15.244:/tmp/root/now_playing.png"
-                )
-                # logger.debug(send_image_command.split())
-                send_image = subprocess.Popen(
-                    send_image_command.split(),
-                )
-                send_image.communicate()
-
-                show_image_command = "sshpass -p mario ssh root@192.168.15.244"
-                show_image = subprocess.Popen(
-                    show_image_command.split(),
-                    stdin=subprocess.PIPE,
-                    universal_newlines=True,
-                )
-                if args[0]["status"] == "pause":
-                    show_image.stdin.write(
-                        "/usr/sbin/eips -v -g /tmp/root/now_playing.png\n"
-                    )
-                else:
-                    show_image.stdin.write(
-                        "/usr/sbin/eips -g /tmp/root/now_playing.png\n"
-                    )
-                show_image.stdin.write("exit\n")
-                show_image.stdin.close()
-
-            except Exception:
-                traceback.print_exc()
-
-        if args[0]["status"] == "stop":
-            logger.debug(f"display image for stop")
-            try:
-                pause_image_command = "sshpass -p mario ssh root@192.168.15.244"
-                pause_image = subprocess.Popen(
-                    pause_image_command.split(),
-                    stdin=subprocess.PIPE,
-                    universal_newlines=True,
-                )
-                pause_image.stdin.write("/usr/sbin/eips -g /tmp/root/stopped.png\n")
-                pause_image.stdin.write("exit\n")
-                pause_image.stdin.close()
-
-            except Exception:
-                traceback.print_exc()
-
+        timer = threading.Timer(0.5, display_data, [args[0], wasplaying, isplaying])
+        for thread in threading.enumerate():
+            if type(thread) == threading.Timer:
+                if thread.is_alive():
+                    thread.cancel()
+        timer.start()
+        
 
 # Init some stuff:
 filepath = pathlib.Path(__file__).parent.resolve()
@@ -222,7 +217,6 @@ lastpass = {
     "artist": "none",
     "title": "none",
     "status": "none",
-    "lastcall": datetime.now(),
 }
 
 
