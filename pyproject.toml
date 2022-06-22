@@ -12,6 +12,7 @@ dependencies = [
     "PyHyphen>=4.0.3",
     "socketIO-client>=0.7.2",
     "PyYAML>=6.0",
+    "python-socketio[client]==4.6.1",
 ]
 requires-python = ">=3.9"
 

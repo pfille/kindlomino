@@ -37,15 +37,15 @@ def smart_wrap(text):
         text = wrap(
             text, width=max_chars_per_line, use_hyphenator=hyphenators[estimated_lang]
         )
-        logger.debug(len(text[1]))
+        # logger.debug(len(text[1]))
         if len(text) > 2:
             text[1] = text[1].ljust(max_chars_per_line, " ")
             text[1] = text[1][:-3] + "..."
         text = "\n".join((text[0], text[1]))
-        logger.debug("estimated lang in dict: " + estimated_lang)
+        # logger.debug("estimated lang in dict: " + estimated_lang)
     elif len(text) > max_chars_per_line:
         text = simple_wrap(text)
-        logger.debug("estimated lang not in dict: " + estimated_lang)
+        # logger.debug("estimated lang not in dict: " + estimated_lang)
     return text
 
 
@@ -61,8 +61,12 @@ def on_push_state(*args):
     global separator
     global w_disp, h_disp
     time_diff_calls = datetime.now() - lastpass["lastcall"]
+    logger.debug(f"time_diff_calls: {time_diff_calls}")
+    logger.debug(f"current status: {args[0]['status']}")
+    logger.debug(f"last status: {lastpass['status']}")
     if "status" in args[0].keys() and time_diff_calls > timedelta(milliseconds=1500):
-        logger.info(args[0])
+        # logger.info(args[0])
+        logger.debug(f"display image for play/pause")
         wasplaying = bool(lastpass["status"] == "play")
         isplaying = bool(args[0]["status"] == "play")
         if (
@@ -73,8 +77,8 @@ def on_push_state(*args):
 
             artist = smart_wrap(args[0]["artist"])
             title = smart_wrap(args[0]["title"])
-            logger.debug(artist)
-            logger.debug(title)
+            # logger.debug(artist)
+            # logger.debug(title)
 
             now_playing = Image.new("L", (w_disp, h_disp), "white")
             draw = ImageDraw.Draw(now_playing)
@@ -82,8 +86,8 @@ def on_push_state(*args):
             w_artist, h_artist = draw.textsize(artist, font=font, stroke_width=0)
             w_title, h_title = draw.textsize(title, font=font, stroke_width=0)
             w_sep, h_sep = draw.textsize(separator, font=font, stroke_width=0)
-            logger.debug(h_artist)
-            logger.debug(h_title)
+            # logger.debug(h_artist)
+            # logger.debug(h_title)
 
             draw.text(
                 ((w_disp - w_sep) / 2, (h_disp - h_sep) / 2 + 23),
@@ -118,7 +122,7 @@ def on_push_state(*args):
                     + now_playing_file
                     + " root@192.168.15.244:/tmp/root/now_playing.png"
                 )
-                logger.debug(send_image_command.split())
+                # logger.debug(send_image_command.split())
                 send_image = subprocess.Popen(
                     send_image_command.split(),
                 )
@@ -130,9 +134,14 @@ def on_push_state(*args):
                     stdin=subprocess.PIPE,
                     universal_newlines=True,
                 )
-                show_image.stdin.write(
-                    "/usr/sbin/eips -f -g /tmp/root/now_playing.png\n"
-                )
+                if args[0]["status"] == "pause":
+                    show_image.stdin.write(
+                        "/usr/sbin/eips -v -g /tmp/root/now_playing.png\n"
+                    )
+                else:
+                    show_image.stdin.write(
+                        "/usr/sbin/eips -g /tmp/root/now_playing.png\n"
+                    )
                 show_image.stdin.write("exit\n")
                 show_image.stdin.close()
 
@@ -140,6 +149,7 @@ def on_push_state(*args):
                 traceback.print_exc()
 
         if args[0]["status"] == "stop":
+            logger.debug(f"display image for stop")
             try:
                 pause_image_command = "sshpass -p mario ssh root@192.168.15.244"
                 pause_image = subprocess.Popen(
@@ -147,7 +157,7 @@ def on_push_state(*args):
                     stdin=subprocess.PIPE,
                     universal_newlines=True,
                 )
-                pause_image.stdin.write("/usr/sbin/eips -f -g /tmp/root/stopped.png\n")
+                pause_image.stdin.write("/usr/sbin/eips -g /tmp/root/stopped.png\n")
                 pause_image.stdin.write("exit\n")
                 pause_image.stdin.close()
 
