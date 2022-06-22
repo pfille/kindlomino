@@ -174,6 +174,12 @@ language_dict_codes = {
     "es": "es_ES",
 }
 
+hyphenators = {}
+for lang in language_dict_codes.keys():
+    logger.debug(lang, language_dict_codes[lang])
+    hyphenators[lang] = Hyphenator(language_dict_codes[lang])
+logger.debug(hyphenators)
+
 # Make sure stopped.png is available on the kindle
 send_stopped_image_command = (
     "sshpass -p mario scp "
@@ -185,12 +191,6 @@ send_stopped_image = subprocess.Popen(
     send_stopped_image_command.split(),
 )
 send_stopped_image.communicate()
-
-hyphenators = {}
-for lang in language_dict_codes.keys():
-    logger.debug(lang, language_dict_codes[lang])
-    hyphenators[lang] = Hyphenator(language_dict_codes[lang])
-logger.debug(hyphenators)
 
 # Init connection to volumio server
 servername = config["server"]["name"]
