@@ -126,15 +126,15 @@ def display_data(data):
         lastpass = data
         logger.debug(f"display image for stop")
         try:
-            pause_image_command = "sshpass -p mario ssh root@192.168.15.244"
-            pause_image = subprocess.Popen(
-                pause_image_command.split(),
+            stopped_image_command = "sshpass -p mario ssh root@192.168.15.244"
+            stopped_image = subprocess.Popen(
+                stopped_image_command.split(),
                 stdin=subprocess.PIPE,
                 universal_newlines=True,
             )
-            pause_image.stdin.write("/usr/sbin/eips -g /tmp/root/stopped.png\n")
-            pause_image.stdin.write("exit\n")
-            pause_image.stdin.close()
+            stopped_image.stdin.write("/usr/sbin/eips -f -g /tmp/root/stopped.png\n")
+            stopped_image.stdin.write("exit\n")
+            stopped_image.stdin.close()
         except Exception:
             traceback.print_exc()
 
