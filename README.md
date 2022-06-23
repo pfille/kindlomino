@@ -13,7 +13,7 @@ Code and instructions for an easy-on-the-eye ePaper display that talks to a kind
 This project is based on the original [palomino project](https://github.com/veebch/palomino) and [this blog post](https://matthealy.com/kindle?utm_source=pocket_mylist).
 
 ### Logic of the script
-The `kindlomino.py` script is using the [socketIO](https://python-socketio.readthedocs.io/en/latest/index.html) library to listen to changes in the track information provided by the Volumio server. The information is then converted into a PNG with the respective resolution of the kindle display. This image is send to the kindle with `scp` using a USB network connection. After that the kindle native tool `eips` is used to display the image, which is triggered using `ssh`. Admittedly a bit hacky, but it gets the job done :)
+The `kindlomino.py` script is using a [socketIO](https://github.com/invisibleroads/socketIO-client) library to listen to changes in the track information provided by the Volumio server. The information is then converted into a PNG with the respective resolution of the kindle display. This image is send to the kindle with `scp` using a USB network connection. After that the kindle native tool `eips` is used to display the image, which is triggered using `ssh`. Admittedly a bit hacky, but it gets the job done :)
 
 
 ## Hardware
