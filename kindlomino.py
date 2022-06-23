@@ -123,6 +123,7 @@ def display_data(data):
         except Exception:
             traceback.print_exc()
     if data["status"] == "stop":
+        lastpass = data
         logger.debug(f"display image for stop")
         try:
             pause_image_command = "sshpass -p mario ssh root@192.168.15.244"
